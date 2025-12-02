@@ -1,0 +1,6 @@
+autogluon.tabular==0.10.1
+lightautoml==0.4.0
+flaml==1.0.16
+h2o==3.40.0.6
+xgboost==1.7.6
+catboost==1.2.2

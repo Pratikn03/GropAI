@@ -1,1 +1,9 @@
-epochs:10
+train_dir: data/raw/cv/train
+val_dir: data/raw/cv/valid
+epochs: 10
+batch_size: 32
+img_size: 224
+lr: 0.001
+patience: 3
+num_workers: 4
+save_dir: models/vision/resnet18

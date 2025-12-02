@@ -1,38 +1,35 @@
-"""Simple guardrail that surfaces features leaking the target."""
+import hashlib
+import json
+from pathlib import Path
 
-from __future__ import annotations
-
-import argparse
-
-from scripts.data.dataset_registry import load_tabular
+import pandas as pd
 
 
-def main(argv=None):
-    parser = argparse.ArgumentParser(description="Leakage audit for tabular datasets.")
-    parser.add_argument(
-        "--dataset",
-        default="tabular_credit_demo",
-        help="Dataset to analyze for leakage.",
-    )
-    parser.add_argument(
-        "--threshold",
-        type=float,
-        default=0.85,
-        help="Correlation threshold to consider leakage.",
-    )
-    args = parser.parse_args(argv)
-
-    features, target = load_tabular(args.dataset)
-    correlations = features.corrwith(target).dropna()
-    flagged = correlations[correlations.abs() >= args.threshold]
-
-    if flagged.empty:
-        print("No obvious leakage detected.")
-        return
-
-    print("Leakage candidates:")
-    for feature, corr in flagged.items():
-        print(f" - {feature}: correlation={corr:.3f}")
+def main():
+    csv_path = Path("data/raw/tabular/data.csv")
+    report = {
+        "duplicates": [],
+        "leaky_paths": [],
+    }
+    if csv_path.exists():
+        df = pd.read_csv(csv_path)
+        report["missing_values"] = df.isnull().sum().to_dict()
+        seen = {}
+        for idx, row in df.iterrows():
+            digest = hashlib.md5(str(row.values.tolist()).encode()).hexdigest()
+            if digest in seen:
+                report["duplicates"].append({"first": seen[digest], "duplicate": idx})
+            else:
+                seen[digest] = idx
+    for path in Path("data/raw/cv").rglob("*"):
+        if path.is_file():
+            tokens = path.name.lower()
+            if any(tok in tokens for tok in ["_pos", "_neg", "class", "label"]):
+                report["leaky_paths"].append(str(path))
+    out = Path("reports/metrics/leakage_audit.json")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, indent=2))
+    print("Leakage audit written to", out)
 
 
 if __name__ == "__main__":

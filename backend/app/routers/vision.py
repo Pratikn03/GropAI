@@ -1,10 +1,18 @@
-from fastapi import APIRouter, UploadFile, File, Form
+from pathlib import Path
+
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
-import numpy as np, cv2, base64
+import base64
+import numpy as np
+
 from ..services.state import STATE
 from ..services.vision_infer import VisionONNXService
 from ..services.blur import detect_faces_bgr, blur_faces_bboxes
-from pathlib import Path
+
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 
 router = APIRouter()
 
@@ -20,11 +28,15 @@ def _get_model() -> VisionONNXService:
     return _MODEL
 
 def _b64_png(img_bgr: np.ndarray) -> str:
+    if cv2 is None:
+        return ""
     ok, buf = cv2.imencode(".png", img_bgr)
     return base64.b64encode(buf).decode("ascii") if ok else ""
 
 @router.post("/infer")
 async def infer(image: UploadFile = File(...), return_image: bool = Form(False)):
+    if cv2 is None:
+        raise HTTPException(status_code=500, detail="opencv-python-headless is required")
     raw = await image.read()
     arr = np.frombuffer(raw, dtype=np.uint8)
     img = cv2.imdecode(arr, cv2.IMREAD_COLOR)

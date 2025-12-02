@@ -1,5 +1,17 @@
 from fastapi import FastAPI
-from .routers import audio, auth, chat, metrics, privacy, rag, telemetry, train, vision
+from .routers import (
+    audio,
+    auth,
+    chat,
+    explain,
+    features,
+    metrics,
+    privacy,
+    rag,
+    telemetry,
+    train,
+    vision,
+)
 
 app = FastAPI(title="SocialSense-SLM", version="0.1.0")
 
@@ -12,6 +24,8 @@ app.include_router(audio.router, prefix="/audio", tags=["audio"])
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(train.router, prefix="/train", tags=["train"])
 app.include_router(telemetry.router, prefix="/telemetry", tags=["telemetry"])
+app.include_router(features.router, prefix="/features", tags=["features"])
+app.include_router(explain.router, prefix="/explain", tags=["explain"])
 
 @app.get("/")
 def root():

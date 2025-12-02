@@ -1,0 +1,5 @@
+name: vision_demo
+type: vision
+description: Tiny dataset of sample images for prototype inference
+images_dir: data/raw/cv/vision_demo/images
+labels_csv: data/raw/cv/vision_demo/labels.csv

@@ -1,0 +1,6 @@
+name: text_demo
+type: text
+description: Short sentiment snippets for testing text pipelines
+csv_path: data/raw/text/text_demo.csv
+text_column: text
+label_column: label

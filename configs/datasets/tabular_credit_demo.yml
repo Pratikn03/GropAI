@@ -1,0 +1,12 @@
+name: tabular_credit_demo
+type: tabular
+description: Small credit scoring dataset for demos
+csv_path: data/raw/tabular/tabular_credit_demo.csv
+target: defaulted
+features:
+  - age
+  - income
+  - score
+split:
+  train: 0.8
+  test: 0.2

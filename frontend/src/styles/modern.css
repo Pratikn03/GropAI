@@ -1,0 +1,264 @@
+/* ==========================================================================
+   Modern enhancement layer for SocialSense SLM
+   - Keeps original layout intact
+   - Adds tasteful polish, animation, utilities, variants
+   - No extra libs; uses your existing CSS variables from app.css
+   ========================================================================== */
+
+/* ---------- 1) Global improvements ---------- */
+:root.theme {
+  --accent: var(--primary);
+  --accent-2: color-mix(in oklab, var(--primary) 70%, #9eeaff);
+  --glass: rgba(255,255,255,.06);
+  --glass-border: rgba(255,255,255,.10);
+  --shadow-2: 0 12px 40px rgba(0,0,0,.35);
+  --shadow-soft: 0 10px 24px rgba(10,22,50,.10);
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --ring-strong: 0 0 0 4px color-mix(in oklab, var(--primary) 35%, transparent);
+}
+
+/* Smooth interactions */
+html { scroll-behavior: smooth; }
+* { -webkit-tap-highlight-color: transparent; }
+
+/* Better code/pre blocks */
+pre, code, kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+pre {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  overflow:auto;
+}
+
+/* Refined scrollbar */
+*::-webkit-scrollbar { height: 10px; width: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--panel) 30%, var(--primary) 20%);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* ---------- 2) Navbar polish ---------- */
+.nav {
+  backdrop-filter: saturate(1.4) blur(10px);
+  background:
+    radial-gradient(1200px 80px at 20% -20%, color-mix(in oklab, var(--primary) 15%, transparent), transparent),
+    color-mix(in oklab, var(--bg) 90%, transparent);
+}
+.brand .logo {
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 28px rgba(80,160,255,.35);
+}
+.nav-links a {
+  transition: background .2s ease, transform .06s ease, opacity .2s ease;
+}
+.nav-links a:hover { transform: translateY(-1px); }
+.nav-links a.active {
+  background: linear-gradient(to right, color-mix(in oklab, var(--primary) 22%, transparent), transparent);
+  border: 1px solid var(--glass-border);
+}
+
+/* ---------- 3) Cards & surfaces ---------- */
+.card {
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--panel) 92%, transparent), color-mix(in oklab, var(--panel-2) 88%, transparent));
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+.card-header {
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--panel-2) 60%, transparent), transparent);
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+.card:hover {
+  box-shadow: var(--shadow-2);
+  transform: translateY(-1px);
+  transition: box-shadow .18s ease, transform .18s ease;
+}
+.card--glass {
+  background: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px);
+}
+.card--outline { background: var(--panel); border: 1px dashed var(--border); }
+.card--ghost   { background: transparent; border: 1px solid var(--border); }
+
+/* ---------- 4) Buttons & inputs ---------- */
+.btn {
+  transition: transform .06s ease, box-shadow .18s ease, background .18s ease;
+  box-shadow: 0 8px 24px rgba(90,162,255,.30);
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn[aria-busy="true"] {
+  position: relative; pointer-events: none; opacity: .85;
+}
+.btn[aria-busy="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--btn-radius);
+  background:
+    linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
+  animation: shimmer 1.2s infinite;
+}
+@keyframes shimmer { 0%{background-position:-150% 0;} 100%{background-position:250% 0;} }
+.btn.secondary { background: color-mix(in oklab, var(--primary) 18%, var(--panel-2)); color: var(--text); }
+.btn.outline   { background: transparent; border: 1px solid var(--glass-border); color: var(--text); }
+.btn.danger    { background: var(--danger); }
+.btn.success   { background: var(--success); }
+.input, input[type="text"], textarea, select {
+  transition: box-shadow .18s ease, border-color .18s ease, background .18s ease;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--panel-2) 95%, transparent), color-mix(in oklab, var(--panel) 95%, transparent));
+}
+.input:focus, textarea:focus, select:focus { box-shadow: var(--ring-strong); border-color: transparent; }
+.input-row.with-icon .input { padding-left: 42px; }
+.input-row.with-icon .input-icon {
+  position: absolute; left: 12px; width: 20px; top: 50%; transform: translateY(-50%); opacity: .75;
+}
+
+/* ---------- 5) Tables ---------- */
+.table {
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--panel);
+}
+.table th {
+  background: color-mix(in oklab, var(--panel-2) 70%, transparent);
+  text-transform: uppercase;
+  letter-spacing: .3px;
+  font-size: 12px;
+}
+.table tr:hover td {
+  background: color-mix(in oklab, var(--panel-2) 40%, transparent);
+}
+
+/* ---------- 6) Badges ---------- */
+.badge {
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--panel-2) 80%, transparent), transparent);
+  border: 1px solid var(--glass-border);
+}
+.badge--success { background: color-mix(in oklab, var(--success) 18%, var(--panel-2)); color: #0c2d18; }
+.badge--warn    { background: color-mix(in oklab, var(--warn) 18%, var(--panel-2));    color: #40280c; }
+.badge--danger  { background: color-mix(in oklab, var(--danger) 18%, var(--panel-2));  color: #3b0f13; }
+
+/* ---------- 7) Headings ---------- */
+h1,h2,h3 { letter-spacing: .2px; }
+.grad-text {
+  background: linear-gradient(90deg, var(--primary), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- 8) Utility classes ---------- */
+.u-fade-in { animation: fadeIn .35s ease both; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+.u-glow { box-shadow: 0 0 0 1px var(--glass-border), 0 12px 28px rgba(90,162,255,.25) !important; }
+.u-blur { backdrop-filter: blur(10px); }
+.u-shadow { box-shadow: var(--shadow-2) !important; }
+.u-rounded-xl { border-radius: var(--radius-xl) !important; }
+.u-rounded-2xl { border-radius: var(--radius-2xl) !important; }
+.u-grid-2 { display:grid; gap:16px; grid-template-columns: repeat(2,minmax(0,1fr)); }
+.u-grid-3 { display:grid; gap:16px; grid-template-columns: repeat(3,minmax(0,1fr)); }
+@media (max-width: 980px) { .u-grid-2, .u-grid-3 { grid-template-columns: 1fr; } }
+.u-mt-8{margin-top:8px!important}.u-mt-16{margin-top:16px!important}.u-mb-8{margin-bottom:8px!important}.u-mb-16{margin-bottom:16px!important}.u-p-16{padding:16px!important}
+.u-w-100{width:100%!important}.u-maxw-800{max-width:800px!important}
+
+/* ---------- 9) Status chips ---------- */
+.status {
+  display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+  background: var(--panel-2); border:1px solid var(--glass-border); font-size:12px; color: var(--muted);
+}
+.status .dot { width:8px;height:8px; border-radius:50%; background: var(--muted); }
+.status.ok .dot { background: var(--success); }
+.status.warn .dot { background: var(--warn); }
+.status.bad .dot { background: var(--danger); }
+
+/* ---------- 10) Tooltips ---------- */
+.tooltip { position: relative; cursor: help; }
+.tooltip:hover::after {
+  content: attr(data-tip);
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: var(--panel); color: var(--text); border:1px solid var(--glass-border);
+  padding:8px 10px; white-space:nowrap; font-size:12px; border-radius:8px; box-shadow: var(--shadow-soft);
+}
+
+/* ---------- 11) Skeleton loaders ---------- */
+.skeleton {
+  border-radius:10px;
+  background:
+    linear-gradient(90deg,
+      color-mix(in oklab, var(--panel-2) 65%, transparent) 25%,
+      color-mix(in oklab, var(--panel-2) 85%, transparent) 37%,
+      color-mix(in oklab, var(--panel-2) 65%, transparent) 63%);
+  background-size:400% 100%;
+  animation: sk 1.1s ease-in-out infinite;
+}
+@keyframes sk { 0%{background-position:100% 0;} 100%{background-position:0 0;} }
+
+/* ---------- 12) Modals ---------- */
+.modal {
+  position:fixed; inset:0; display:grid; place-items:center; z-index:100;
+  background: color-mix(in oklab, var(--bg) 35%, rgba(0,0,0,.35));
+}
+.modal__panel {
+  width: min(680px, 92%);
+  background: var(--panel);
+  border:1px solid var(--glass-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-2);
+  padding:20px;
+}
+
+/* ---------- 13) Chat niceties ---------- */
+.card-body .answer { line-height:1.55; }
+.code {
+  background: var(--panel-2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 12px;
+}
+
+/* ---------- 14) Focus & a11y ---------- */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-strong) !important;
+  border-color: transparent !important;
+}
+
+/* ---------- 15) Light theme tweaks ---------- */
+:root.theme[data-theme="light"] .card:hover {
+  box-shadow: 0 18px 40px rgba(45,110,230,.12);
+}
+:root.theme[data-theme="light"] .nav {
+  background:
+    radial-gradient(1200px 80px at 20% -20%, color-mix(in oklab, var(--primary) 10%, transparent), transparent),
+    color-mix(in oklab, var(--bg) 98%, transparent);
+}
+
+/* ---------- 16) Page glow ---------- */
+.container .page-glow {
+  position:absolute;
+  inset:-80px -10% auto -10%;
+  height:160px;
+  pointer-events:none;
+  z-index:-1;
+  background: radial-gradient(60% 60% at 20% 20%, color-mix(in oklab, var(--primary) 18%, transparent), transparent 70%);
+  filter:blur(50px);
+  opacity:.55;
+}

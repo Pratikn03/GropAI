@@ -1,32 +1,42 @@
-import React from 'react'
-import { apiPost } from '../services/api'
-
-type Citation = { title: string; url: string; score: number }
+import React from "react";
+import { apiPost } from "../services/api";
 
 export default function Chat(){
-  const [query,setQuery] = React.useState('')
-  const [answer,setAnswer] = React.useState('')
-  const [cits,setCits] = React.useState<Citation[]>([])
+  const [q,setQ] = React.useState("how do we deploy");
+  const [ans,setAns] = React.useState<any>(null);
+  const [busy,setBusy] = React.useState(false);
 
-  const ask = async ()=>{
-    const res = await apiPost('/chat/ask', {query, top_k: 5})
-    setAnswer(res?.answer ?? '')
-    setCits(res?.citations ?? [])
-    setQuery('')
-  }
+  const ask = async()=>{
+    setBusy(true);
+    try { setAns(await apiPost("/chat/ask",{query:q, top_k:5})); }
+    finally { setBusy(false); }
+  };
 
-  return <div>
-    <h2>Chat</h2>
-    <div style={{display:'flex', gap:8}}>
-      <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Ask..." style={{flex:1}} />
-      <button onClick={ask}>Send</button>
+  return (
+    <div style={{display:"grid",gap:12}}>
+      <div className="input-row">
+        <input className="input" value={q} onChange={e=>setQ(e.target.value)} placeholder="Ask the system (RAG)…"/>
+        <button className="btn" onClick={ask} disabled={busy}>{busy ? "Thinking…" : "Ask"}</button>
+        <button className="btn ghost" onClick={()=>setAns(null)}>Clear</button>
+      </div>
+      {ans && (
+        <div className="card" style={{background:"var(--panel-2)"}}>
+          <div className="card-body">
+            <div style={{fontWeight:700,marginBottom:8}}>Answer</div>
+            <pre style={{background:"transparent",whiteSpace:"pre-wrap",margin:0,fontFamily:"ui-monospace,Menlo,Consolas"}}>
+{JSON.stringify(ans.answer ?? ans, null, 2)}
+            </pre>
+            {!!ans.citations?.length && (
+              <div style={{marginTop:12}}>
+                <div style={{color:"var(--muted)",fontSize:13}}>Sources</div>
+                <ul style={{margin:0,paddingLeft:16}}>
+                  {ans.citations.map((source:any)=><li key={source.rank}><strong>{source.title}</strong> — score {source.score.toFixed(3)}</li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
-    {answer && <div style={{marginTop:8}}><b>Answer:</b><div style={{whiteSpace:'pre-wrap'}}>{answer}</div></div>}
-    {cits.length>0 && <div style={{marginTop:8}}>
-      <b>Citations:</b>
-      <ul>
-        {cits.map((cit,i)=><li key={i}>{cit.url ? <a href={cit.url} target="_blank">{cit.title}</a> : cit.title} (score {cit.score.toFixed(3)})</li>)}
-      </ul>
-    </div>}
-  </div>
+  );
 }

@@ -1,1 +1,25 @@
-<!doctype html><html><body><div id='root'></div><script type='module' src='/src/main.tsx'></script></body></html>
+<!doctype html>
+<html lang="en" class="theme" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#0b1220" />
+    <title>SocialSense SLM</title>
+    <style>
+      :root.theme[data-theme="dark"] { background:#0b1220; color:#e6eefc; }
+      :root.theme[data-theme="light"] { background:#f7f9fc; color:#0b1220; }
+      body { margin:0; }
+    </style>
+    <script>
+      try {
+        const saved = localStorage.getItem("socialsense-theme");
+        if (saved) document.documentElement.setAttribute("data-theme", saved);
+      } catch (_) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

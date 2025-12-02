@@ -1,74 +1,66 @@
-import React from 'react'
-import Chat from './components/Chat'
-import VisionStudio from './components/VisionStudio'
-import AudioStudio from './components/AudioStudio'
-import Metrics from './components/Metrics'
-import PrivacyConsent from './components/PrivacyConsent'
-import Datasets from './components/Datasets'
-import FeaturesInfo from './components/FeaturesInfo'
-import GovernanceScore from './components/GovernanceScore'
+import React from "react";
+import "./styles/app.css";
+import "./styles/modern.css";
+import Chat from "./components/Chat";
+import Datasets from "./components/Datasets";
+import FeaturesInfo from "./components/FeaturesInfo";
+import GovernanceScore from "./components/GovernanceScore";
+import Layout from "./components/Layout";
+import Health from "./components/Health";
+import Admin from "./components/Admin";
 
-const columnStyle: React.CSSProperties = {display:'flex', gap:16, flexWrap:'wrap'}
-const card: React.CSSProperties = {flex:'1 1 320px', padding:16, border:'1px solid #ddd', borderRadius:8, background:'#fff'}
-
-function ControlRoom(){
-  return (
-    <>
-      <div style={columnStyle}>
-        <section style={card}><VisionStudio/></section>
-        <section style={card}><AudioStudio/></section>
-        <section style={card}><Chat/></section>
-      </div>
-      <div style={{...columnStyle, marginTop:24}}>
-        <section style={card}><Metrics/></section>
-        <section style={card}><PrivacyConsent/></section>
-        <section style={card}><FeaturesInfo/></section>
-        <section style={card}><GovernanceScore/></section>
-      </div>
-    </>
-  )
-}
+const workspaceSections = {
+  "#/": <Chat />,
+  "#/datasets": <Datasets />,
+  "#/health": <Health />,
+  "#/admin": <Admin />,
+};
 
 export default function App(){
-  const [route, setRoute] = React.useState<string>(() => window.location.hash || '#/')
+  const [hash,setHash]=React.useState(window.location.hash || "#/");
+  React.useEffect(()=>{
+    const listener=() => setHash(window.location.hash || "#/");
+    window.addEventListener("hashchange", listener);
+    return () => window.removeEventListener("hashchange", listener);
+  },[]);
 
-  React.useEffect(() => {
-    const handleHash = () => setRoute(window.location.hash || '#/')
-    window.addEventListener('hashchange', handleHash)
-    return () => window.removeEventListener('hashchange', handleHash)
-  }, [])
-
-  const active = route === '#/datasets' ? 'datasets' : 'dashboard'
-  const navLink = (href: string, label: string) => (
-    <a
-      key={href}
-      href={href}
-      style={{
-        textDecoration: 'none',
-        fontWeight: active === label.toLowerCase() ? 600 : 500,
-        color: active === label.toLowerCase() ? '#0f172a' : '#475569'
-      }}
-    >
-      {label}
-    </a>
-  )
-
-  let content: React.ReactNode = <ControlRoom/>
-  if (active === 'datasets') {
-    content = <Datasets/>
-  }
+  const mainContent = workspaceSections[hash] ?? <Chat />;
 
   return (
-    <div style={{padding:24, fontFamily:'system-ui', background:'#f5f5f5', minHeight:'100vh'}}>
-      <header style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
-        <h1 style={{margin:0}}>SocialSense Control Room</h1>
-        <nav style={{display:'flex', gap:16}}>
-          {navLink('#/', 'Dashboard')}
-          <span style={{color:'#cbd5f5'}}>|</span>
-          {navLink('#/datasets', 'Datasets')}
-        </nav>
-      </header>
-      {content}
-    </div>
-  )
+    <Layout route={hash}>
+      <div className="grid">
+        <section className="card">
+          <div className="card-header">
+            <svg className="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M5 12l5 5L20 7"/></svg>
+            System Status
+          </div>
+          <div className="card-body">
+            <div className="card-kpis" style={{marginBottom:12}}>
+              <div className="kpi">
+                <div className="label">Governance Risk</div>
+                <div className="value"><GovernanceScore/></div>
+              </div>
+              <div className="kpi">
+                <div className="label">Feature Store</div>
+                <div className="value"><FeaturesInfo/></div>
+              </div>
+            </div>
+            <div style={{fontSize:13,color:"var(--muted)"}}>
+              SBERT RAG, LightGBM HPO, SHAP batch, ONNX CV path.
+            </div>
+          </div>
+        </section>
+
+        <section className="card">
+          <div className="card-header">
+            <svg className="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v2H3zm0 6h18v2H3zm0 6h18v2H3z"/></svg>
+            Workspace
+          </div>
+          <div className="card-body">
+            {mainContent}
+          </div>
+        </section>
+      </div>
+    </Layout>
+  );
 }

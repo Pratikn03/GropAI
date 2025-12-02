@@ -1,0 +1,1 @@
+export async function apiPost(p:string,b:any){return {ok:true}}

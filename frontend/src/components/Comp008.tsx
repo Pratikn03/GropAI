@@ -1,0 +1,1 @@
+export default function Comp008(){return <div>Comp008</div>}

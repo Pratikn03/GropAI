@@ -1,0 +1,6 @@
+{
+  "csv_path": "data/raw/tabular/data.csv",
+  "target": "label",
+  "n_trials": 25,
+  "seed": 42
+}
